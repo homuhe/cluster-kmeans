@@ -25,6 +25,7 @@ class KMCluster(num_of_clusters: String) {
         .toList
       embeddings(word) = embedding
 
+      //min / max value calculation
       for (num <- embedding) {
         if (num <= min) min = num
         if (num >= max) max = num
