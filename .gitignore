@@ -38,4 +38,6 @@ build.log
 #  ^\.pc/
 
 #SHITTY output not in target directory
-build.log
+/test.txt
+/wikipedia-300-mincount-50-window-8-cbow.txt
+/wikipedia-300-mincount-50-window-8-cbow.txt.gz
