@@ -6,9 +6,11 @@ import scala.io.Source
 /**
   *
   */
-class KMCluster(cl: String) {
+class KMCluster(num_of_clusters: String) {
   val embeddings = mutable.HashMap[String, List[Float]]()
-  val cluster_size = cl.toInt
+  val k = num_of_clusters.toInt
+  val tol = 0.001
+  val max = 50
 
   def read(file: String): mutable.HashMap[String, List[Float]] = {
     val lines = Source.fromFile(file)
@@ -41,7 +43,8 @@ object KMCluster {
       val KMC1 = new KMCluster(args(1))
       val input = KMC1.read(args(0))
 
-    input.foreach(entry => println(entry))
+      println(input.size + " Einträge gelesen!")
+    //input.foreach(entry => println(entry))
 
 
     println("\nDONE!")
