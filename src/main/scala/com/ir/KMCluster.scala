@@ -3,9 +3,12 @@ package com.ir
 import scala.collection.mutable
 import scala.io.Source
 
-
-class KMCluster {
+/**
+  *
+  */
+class KMCluster(cl: String) {
   val embeddings = mutable.HashMap[String, List[Float]]()
+  val cluster_size = cl.toInt
 
   def read(file: String): mutable.HashMap[String, List[Float]] = {
     val lines = Source.fromFile(file)
@@ -33,11 +36,13 @@ object KMCluster {
 
     println( "FML" )
 
-    val KMC1 = new KMCluster
+    val KMC1 = new KMCluster(args(1))
     val input = KMC1.read(args(0))
 
     input.foreach(entry => println(entry))
 
+
+    println("\nDONE!")
   }
 
 }
