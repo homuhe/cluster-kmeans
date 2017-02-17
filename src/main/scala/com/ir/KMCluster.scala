@@ -10,6 +10,9 @@ class KMCluster(num_of_clusters: String) {
   val embeddings = mutable.HashMap[String, List[Float]]()
   val k = num_of_clusters.toInt
 
+  var min = 0.0
+  var max = 0.0
+
   def read(file: String): mutable.HashMap[String, List[Float]] = {
     val lines = Source.fromFile(file)
       .getLines()
@@ -21,6 +24,11 @@ class KMCluster(num_of_clusters: String) {
         .map(x => x.toFloat)
         .toList
       embeddings(word) = embedding
+
+      for (num <- embedding) {
+        if (num <= min) min = num
+        if (num >= max) max = num
+      }
     }
     embeddings
   }
@@ -42,10 +50,12 @@ object KMCluster {
       val input = KMC1.read(args(0))
 
       println(input.size + " Einträge gelesen!")
-    //input.foreach(entry => println(entry))
 
+      //input.foreach(entry => println(entry))
 
-    println("\nDONE!")
+      println(KMC1.min + "\n" + KMC1.max)
+
+      println("\nDONE!")
     }
     else help()
   }
