@@ -36,13 +36,23 @@ object KMCluster {
 
     println( "FML" )
 
-    val KMC1 = new KMCluster(args(1))
-    val input = KMC1.read(args(0))
+    if (args.length == 2) {
+
+      val KMC1 = new KMCluster(args(1))
+      val input = KMC1.read(args(0))
 
     input.foreach(entry => println(entry))
 
 
     println("\nDONE!")
+    }
+    else help()
   }
 
+  def help(): Unit = {
+    println("Usage: ./cluster-kmeans arg1 arg2")
+    println("\t\targ1: INPUT - text file with embeddings")
+    println("\t\targ2: ARG2 - desired cluster size")
+    sys.exit()
+  }
 }
