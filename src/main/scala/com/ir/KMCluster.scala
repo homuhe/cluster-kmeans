@@ -53,13 +53,15 @@ class KMCluster(num_of_clusters: String) {
 
     //test me plz
     var distance: Float = 0
-    for(index <- 0 until vector1.length){
+    for(index <- vector1.indices){
       distance += square(vector1(index) - vector2(index))
     }
 
-    Math.sqrt(distance).toFloat
+
 
     def square(x: Float) = x * x
+
+    Math.sqrt(distance).toFloat
   }
 
 
@@ -102,9 +104,13 @@ object KMCluster {
 
       println(input.size + " Einträge gelesen!")
 
-      val result = kmc.meanVector(List( Vector(1.0.toFloat, 2.0.toFloat), Vector(3.0.toFloat, 5.0.toFloat))) //TODO delete
+      val vec1 = Vector(1.0.toFloat, 2.0.toFloat, 0.toFloat, 0.toFloat, 0.toFloat, 0.toFloat)
+      val vec2 = Vector(3.0.toFloat, 5.0.toFloat, 10.toFloat, 20.toFloat, 30.toFloat, 40.toFloat)
+
+      val result = kmc.meanVector(List( vec1, vec2)) //TODO delete
       println(result) //TODO delete
 
+      println(kmc.euclidDistance(vec1, vec2))
 
       println("\nDONE!")
     }
