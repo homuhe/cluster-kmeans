@@ -9,10 +9,15 @@ class Cluster(c: Vector[Float]) {
 }
 
 class Clusters(centroids: List[Vector[Float]]) {
-  var cluster = List[Cluster]
-  for (centroid <- centroids) {
-    new Cluster(centroid) :: cluster
+  var cluster = List[Cluster]()
+
+  def fill() = {
+    for (centroid <- centroids) {
+      val x = new Cluster(centroid)
+      cluster = x :: cluster
+    }
   }
+
 }
 
 /**
