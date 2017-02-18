@@ -94,6 +94,7 @@ class KMCluster(num_of_clusters: String) {
   }
 
   def updateCentroids() = {
+
     for(cluster <- clusters){
       var wordVecList = List[Vector[Float]]()
 
