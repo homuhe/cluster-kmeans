@@ -16,6 +16,8 @@ class KMCluster(num_of_clusters: String) {
   var clusters = List[Cluster]()
   val k = num_of_clusters.toInt
 
+  val thresholdLimit = 1
+
   def read(file: String): mutable.HashMap[String, Vector[Float]] = {
     val lines = Source.fromFile(file)
       .getLines()
@@ -79,29 +81,41 @@ class KMCluster(num_of_clusters: String) {
   }
 
   def populateClusters(): Unit = {
-    resetClusterWordSets()
 
-    for (word <- embeddings) {
-      var minCentroid = (0, Float.MaxValue)
+    do {
+      resetClusterWordSets()
+      for (word <- embeddings) {
+        var minCentroid = (0, Float.MaxValue)
 
-      for (cluster <- clusters) {
-        val dist = euclidDistance(word._2, cluster.centroid)
+        for (cluster <- clusters) {
+          val dist = euclidDistance(word._2, cluster.centroid)
 
-        if (dist < minCentroid._2) {
-          minCentroid = (clusters.indexOf(cluster), dist)
+          if (dist < minCentroid._2) {
+            minCentroid = (clusters.indexOf(cluster), dist)
+          }
         }
+        clusters(minCentroid._1).words = word._1 :: clusters(minCentroid._1).words
       }
-      clusters(minCentroid._1).words = word._1 :: clusters(minCentroid._1).words
-    }
-    updateClusterCentroids()
+    }while(updateClusterCentroids() != k)
+
+
   }
 
-  def updateClusterCentroids() = {
+  def updateClusterCentroids() : Int = {
+    var reachedThreshold = 0
+
     for(cluster <- clusters){
+      val centroidDummy = cluster.centroid
       var wordVecList = List[Vector[Float]]()
       cluster.words.foreach(word => wordVecList = embeddings(word) :: wordVecList)
       cluster.centroid = meanVector(wordVecList)
+
+      if(euclidDistance(centroidDummy, cluster.centroid) < thresholdLimit){
+        reachedThreshold += 1
+      }
     }
+    println(reachedThreshold)
+    reachedThreshold
   }
 
   def resetClusterWordSets() = {
@@ -136,22 +150,22 @@ object KMCluster {
       kmc.createClusters(kmc.pickRandomCentroids())
 
       kmc.populateClusters()
-      kmc.clusters.foreach(cluster => println(kmc.clusters.indexOf(cluster) +
-        " : " + cluster.words + "\nnumber of words: " + cluster.words.size))
-      var len = 0
-      kmc.clusters.foreach(cluster => len += cluster.words.size)
-      println("total number of words : " + len)
-      // repeat that shit couple of times
-      kmc.populateClusters()
-      kmc.populateClusters()
-      println("-----------------------")
-      kmc.clusters.foreach(cluster => println(kmc.clusters.indexOf(cluster) +
-        " : " + cluster.words+ "\nnumber of words: " + cluster.words.size))
-      len = 0
-      kmc.clusters.foreach(cluster => len += cluster.words.size)
-      println("total number of words : " + len)
-
-      println("should be: " + kmc.embeddings.size)
+//      kmc.clusters.foreach(cluster => println(kmc.clusters.indexOf(cluster) +
+//        " : " + cluster.words + "\nnumber of words: " + cluster.words.size))
+//      var len = 0
+//      kmc.clusters.foreach(cluster => len += cluster.words.size)
+//      println("total number of words : " + len)
+//      // repeat that shit couple of times
+//      for(num <- 0 until 10)      kmc.populateClusters()
+//
+//      println("-----------------------")
+//      kmc.clusters.foreach(cluster => println(kmc.clusters.indexOf(cluster) +
+//        " : " + cluster.words+ "\nnumber of words: " + cluster.words.size))
+//      len = 0
+//      kmc.clusters.foreach(cluster => len += cluster.words.size)
+//      println("total number of words : " + len)
+//
+//      println("should be: " + kmc.embeddings.size)
 
     }
     else help()
