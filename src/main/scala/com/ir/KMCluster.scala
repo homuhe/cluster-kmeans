@@ -31,8 +31,6 @@ class KMCluster(num_of_clusters: String) {
     embeddings
   }
 
-  def initDimensionality = embeddings.head._2.length
-
   /**
     * Returns mean vector of given vector list
     * @param vectors list of vectors
@@ -50,18 +48,18 @@ class KMCluster(num_of_clusters: String) {
     mVector.map(sum => sum / vectors.length)
   }
 
-
   def euclidDistance(vector1: Vector[Float], vector2: Vector[Float]): Float = {
     var distance: Float = 0
+
+    def square(x: Float) = x * x
+
     for (index <- vector1.indices) {
       distance += square(vector1(index) - vector2(index))
     }
     Math.sqrt(distance).toFloat
   }
 
-  def square(x: Float) = x * x
-
-  def pickRandomCentroids : List[Vector[Float]] ={
+  def pickRandomCentroids(): List[Vector[Float]] = {
     var centroids: List[Vector[Float]] = Nil
 
     val wordVecKeys = embeddings.keySet.toList
@@ -92,16 +90,17 @@ class KMCluster(num_of_clusters: String) {
         }
       }
     }
-    updateCentroids
-    def updateCentroids = {
-      for(cluster <- clusters){
-        var wordVecList = List[Vector[Float]]()
-        cluster.words.map(word => wordVecList = embeddings(word) :: wordVecList)
-        cluster.centroid = meanVector(wordVecList)
-      }
-    }
+    updateCentroids()
   }
 
+  def updateCentroids() = {
+    for(cluster <- clusters){
+      var wordVecList = List[Vector[Float]]()
+
+      cluster.words.foreach(word => wordVecList = embeddings(word) :: wordVecList)
+      cluster.centroid = meanVector(wordVecList)
+    }
+  }
 
 
 }
@@ -121,18 +120,9 @@ object KMCluster {
       val input = kmc.read(args(0))
 
       println(input.size + " Einträge gelesen!")
-
-      val vec1 = Vector(1.0.toFloat, 2.0.toFloat, 0.toFloat, 0.toFloat, 0.toFloat, 0.toFloat)
-      val vec2 = Vector(3.0.toFloat, 5.0.toFloat, 10.toFloat, 20.toFloat, 30.toFloat, 40.toFloat)
-
-      val result = kmc.meanVector(List(vec1, vec2)) //TODO delete
-      println(result) //TODO delete
-
-      println(kmc.euclidDistance(vec1, vec2))
-
       println("\nDONE!")
 
-      kmc.createClusters(kmc.pickRandomCentroids)
+      kmc.createClusters(kmc.pickRandomCentroids())
 
       println("old centroids:")
       kmc.clusters.foreach(cluster => println(cluster.centroid))
