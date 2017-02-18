@@ -3,6 +3,10 @@ package com.ir
 import scala.collection.mutable
 import scala.io.Source
 
+/**
+  *
+  * @param c
+  */
 class Cluster(c: Vector[Float]) {
   var words: List[String] = Nil
   var centroid = c
@@ -16,8 +20,10 @@ class KMCluster(num_of_clusters: String) {
   var clusters = List[Cluster]()
   val k = num_of_clusters.toInt
 
-  val thresholdLimit = 1
+  val thresholdLimit = 2
 
+  /*
+   */
   def read(file: String): mutable.HashMap[String, Vector[Float]] = {
     val lines = Source.fromFile(file)
       .getLines()
@@ -33,6 +39,8 @@ class KMCluster(num_of_clusters: String) {
     embeddings
   }
 
+  /*
+   */
   def pickRandomCentroids(): List[Vector[Float]] = {
     var centroids: List[Vector[Float]] = Nil
 
@@ -63,6 +71,8 @@ class KMCluster(num_of_clusters: String) {
     mVector.map(sum => sum / vectors.length)
   }
 
+  /*
+   */
   def euclidDistance(vector1: Vector[Float], vector2: Vector[Float]): Float = {
     var distance: Float = 0
 
@@ -74,6 +84,8 @@ class KMCluster(num_of_clusters: String) {
     Math.sqrt(distance).toFloat
   }
 
+  /*
+   */
   def createClusters(centroids: List[Vector[Float]]) = {
     for (centroid <- centroids) {
       clusters = new Cluster(centroid) :: clusters
@@ -150,22 +162,7 @@ object KMCluster {
       kmc.createClusters(kmc.pickRandomCentroids())
 
       kmc.populateClusters()
-//      kmc.clusters.foreach(cluster => println(kmc.clusters.indexOf(cluster) +
-//        " : " + cluster.words + "\nnumber of words: " + cluster.words.size))
-//      var len = 0
-//      kmc.clusters.foreach(cluster => len += cluster.words.size)
-//      println("total number of words : " + len)
-//      // repeat that shit couple of times
-//      for(num <- 0 until 10)      kmc.populateClusters()
-//
-//      println("-----------------------")
-//      kmc.clusters.foreach(cluster => println(kmc.clusters.indexOf(cluster) +
-//        " : " + cluster.words+ "\nnumber of words: " + cluster.words.size))
-//      len = 0
-//      kmc.clusters.foreach(cluster => len += cluster.words.size)
-//      println("total number of words : " + len)
-//
-//      println("should be: " + kmc.embeddings.size)
+      kmc.clusters.foreach(cluster => println("\n" + cluster.words))
 
     }
     else help()
