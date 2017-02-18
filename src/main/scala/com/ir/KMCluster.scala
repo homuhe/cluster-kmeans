@@ -67,28 +67,6 @@ class KMCluster(num_of_clusters: String) {
 
   def square(x: Float) = x * x
 
-  def createCluster(vectors: List[Vector[Float]], centeroids: List[Vector[Float]]):
-                                  mutable.HashMap[Vector[Float], List[Vector[Float]]] = {
-
-    val cluster = mutable.HashMap[Vector[Float], List[Vector[Float]]]()
-
-    for (vector <- vectors) {
-      var min = Float.MaxValue
-
-
-      for (centeroid <- centeroids) {
-        val distance = euclidDistance(vector, centeroid)
-        if (distance < min) {
-          min = distance
-          //TODO
-
-        }
-      }
-    }
-    cluster
-  }
-
-
   def pickRandomCentroids : List[Vector[Float]] ={
     var centroids: List[Vector[Float]] = Nil
 
