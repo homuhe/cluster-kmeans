@@ -10,9 +10,6 @@ class KMCluster(num_of_clusters: String) {
   val embeddings = mutable.HashMap[String, List[Float]]()
   val k = num_of_clusters.toInt
 
-  //var min = 0.0
-  //var max = 0.0
-
   def read(file: String): mutable.HashMap[String, List[Float]] = {
     val lines = Source.fromFile(file)
       .getLines()
@@ -24,12 +21,6 @@ class KMCluster(num_of_clusters: String) {
         .map(x => x.toFloat)
         .toList
       embeddings(word) = embedding
-
-      //min / max value calculation
-      //for (num <- embedding) {
-        //if (num <= min) min = num
-        //if (num >= max) max = num
-      //}
     }
     embeddings
   }
@@ -51,6 +42,33 @@ class KMCluster(num_of_clusters: String) {
     mVector.map(sum => sum / vectors.length)
   }
 
+
+  def euclidDistance(vector1: List[Float], vector2: List[Float]): Float = {
+    Float.MinValue //TODO Implementation of calculation
+  }
+
+
+  def createCluster(vectors: List[List[Float]], centeroids: List[List[Float]]):
+                                  mutable.HashMap[List[Float], List[List[Float]]] = {
+
+    val cluster = mutable.HashMap[List[Float], List[List[Float]]]()
+
+    for (vector <- vectors) {
+      var min = Float.MaxValue
+
+
+      for (centeroid <- centeroids) {
+        val distance = euclidDistance(vector, centeroid)
+        if (distance < min) {
+          min = distance
+          //TODO
+
+        }
+      }
+    }
+    cluster
+  }
+
 }
 
 /**
@@ -69,12 +87,9 @@ object KMCluster {
 
       println(input.size + " Einträge gelesen!")
 
-      val result = kmc.meanVector(List( List(1.0.toFloat, 2.0.toFloat), List(3.0.toFloat, 5.0.toFloat)))
+      val result = kmc.meanVector(List( List(1.0.toFloat, 2.0.toFloat), List(3.0.toFloat, 5.0.toFloat))) //TODO delete
+      println(result) //TODO delete
 
-      println(result)
-
-
-      //input.foreach(entry => println(entry))
 
       println("\nDONE!")
     }
