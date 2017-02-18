@@ -10,8 +10,8 @@ class KMCluster(num_of_clusters: String) {
   val embeddings = mutable.HashMap[String, List[Float]]()
   val k = num_of_clusters.toInt
 
-  var min = 0.0
-  var max = 0.0
+  //var min = 0.0
+  //var max = 0.0
 
   def read(file: String): mutable.HashMap[String, List[Float]] = {
     val lines = Source.fromFile(file)
@@ -26,12 +26,29 @@ class KMCluster(num_of_clusters: String) {
       embeddings(word) = embedding
 
       //min / max value calculation
-      for (num <- embedding) {
-        if (num <= min) min = num
-        if (num >= max) max = num
-      }
+      //for (num <- embedding) {
+        //if (num <= min) min = num
+        //if (num >= max) max = num
+      //}
     }
     embeddings
+  }
+
+  /**
+    * Returns mean vector of given vector list
+    * @param vectors list of vectors
+    * @return mean vector
+    */
+  def meanVector(vectors: List[List[Float]]): List[Float] = {
+    val len = vectors.head.length
+    var mVector = List.fill(len)(0.0.toFloat) //TODO enhance fill
+
+    for (vector <- vectors) {
+      for (i <- 0 until len)
+        mVector = mVector.updated(i, mVector(i) + vector(i))
+    }
+
+    mVector.map(sum => sum / vectors.length)
   }
 
 }
@@ -47,14 +64,17 @@ object KMCluster {
 
     if (args.length == 2) {
 
-      val KMC1 = new KMCluster(args(1))
-      val input = KMC1.read(args(0))
+      val kmc = new KMCluster(args(1))
+      val input = kmc.read(args(0))
 
       println(input.size + " Einträge gelesen!")
 
-      //input.foreach(entry => println(entry))
+      val result = kmc.meanVector(List( List(1.0.toFloat, 2.0.toFloat), List(3.0.toFloat, 5.0.toFloat)))
 
-      println(KMC1.min + "\n" + KMC1.max)
+      println(result)
+
+
+      //input.foreach(entry => println(entry))
 
       println("\nDONE!")
     }
