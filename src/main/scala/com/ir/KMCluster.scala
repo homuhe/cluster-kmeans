@@ -5,7 +5,14 @@ import scala.io.Source
 
 class Cluster(c: Vector[Float]) {
   val words = mutable.Set
-  val centeroid = c
+  val centroid = c
+}
+
+class Clusters(centroids: List[Vector[Float]]) {
+  val cluster = List[List[Vector[Float]]]
+  for (centroid <- centroids) {
+    //TODO
+  }
 }
 
 /**
