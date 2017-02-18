@@ -3,6 +3,18 @@ package com.ir
 import scala.collection.mutable
 import scala.io.Source
 
+class Cluster(c: Vector[Float]) {
+  val words = mutable.Set
+  val centroid = c
+}
+
+class Clusters(centroids: List[Vector[Float]]) {
+  val cluster = List[List[Vector[Float]]]
+  for (centroid <- centroids) {
+    //TODO
+  }
+}
+
 /**
   *
   */
@@ -36,11 +48,6 @@ class KMCluster(num_of_clusters: String) {
     val dimensionality = vectors.head.length
     var mVector = Vector.fill(dimensionality)(0.0.toFloat) //TODO enhance fill
 
-
-    println(mVector.indices)
-    println(mVector.size)
-    println(mVector.length)
-
     for (vector <- vectors) {
       for (i <- 0 until dimensionality)
         mVector = mVector.updated(i, mVector(i) + vector(i))
@@ -55,17 +62,16 @@ class KMCluster(num_of_clusters: String) {
 
     //test me plz
     var distance: Float = 0
-    for(index <- vector1.indices){
+    for (index <- vector1.indices) {
       distance += square(vector1(index) - vector2(index))
     }
 
 
 
-    def square(x: Float) = x * x
-
     Math.sqrt(distance).toFloat
   }
 
+  def square(x: Float) = x * x
 
   def createCluster(vectors: List[Vector[Float]], centeroids: List[Vector[Float]]):
                                   mutable.HashMap[Vector[Float], List[Vector[Float]]] = {
@@ -88,6 +94,21 @@ class KMCluster(num_of_clusters: String) {
     cluster
   }
 
+
+  def pickRandomCentroids : List[Vector[Float]] ={
+    var centroids: List[Vector[Float]] = Nil
+
+    val wordVecKeys = embeddings.keySet.toList
+    val randomizer = scala.util.Random
+
+    for(num <- 0 until k){
+      val randomNumber = randomizer.nextInt(wordVecKeys.size)
+      centroids = embeddings(wordVecKeys(randomNumber)) :: centroids
+    }
+    centroids
+  }
+
+
 }
 
 /**
@@ -109,12 +130,14 @@ object KMCluster {
       val vec1 = Vector(1.0.toFloat, 2.0.toFloat, 0.toFloat, 0.toFloat, 0.toFloat, 0.toFloat)
       val vec2 = Vector(3.0.toFloat, 5.0.toFloat, 10.toFloat, 20.toFloat, 30.toFloat, 40.toFloat)
 
-      val result = kmc.meanVector(List( vec1, vec2)) //TODO delete
+      val result = kmc.meanVector(List(vec1, vec2)) //TODO delete
       println(result) //TODO delete
 
       println(kmc.euclidDistance(vec1, vec2))
 
       println("\nDONE!")
+
+      println(kmc.pickRandomCentroids)
     }
     else help()
   }
