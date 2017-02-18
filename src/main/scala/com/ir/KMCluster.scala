@@ -7,10 +7,10 @@ import scala.io.Source
   *
   */
 class KMCluster(num_of_clusters: String) {
-  val embeddings = mutable.HashMap[String, List[Float]]()
+  val embeddings = mutable.HashMap[String, Vector[Float]]()
   val k = num_of_clusters.toInt
 
-  def read(file: String): mutable.HashMap[String, List[Float]] = {
+  def read(file: String): mutable.HashMap[String, Vector[Float]] = {
     val lines = Source.fromFile(file)
       .getLines()
       .map(line => line.split(" "))
@@ -19,7 +19,7 @@ class KMCluster(num_of_clusters: String) {
       val word = line(0)
       val embedding = line.tail
         .map(x => x.toFloat)
-        .toList
+        .toVector
       embeddings(word) = embedding
     }
     embeddings
@@ -30,28 +30,43 @@ class KMCluster(num_of_clusters: String) {
     * @param vectors list of vectors
     * @return mean vector
     */
-  def meanVector(vectors: List[List[Float]]): List[Float] = {
-    val len = vectors.head.length
-    var mVector = List.fill(len)(0.0.toFloat) //TODO enhance fill
+  def meanVector(vectors: List[Vector[Float]]): Vector[Float] = {
+    val dimensionality = vectors.head.length
+    var mVector = Vector.fill(dimensionality)(0.0.toFloat) //TODO enhance fill
+
+
+    println(mVector.indices)
+    println(mVector.size)
+    println(mVector.length)
 
     for (vector <- vectors) {
-      for (i <- 0 until len)
+      for (i <- 0 until dimensionality)
         mVector = mVector.updated(i, mVector(i) + vector(i))
     }
 
     mVector.map(sum => sum / vectors.length)
+
   }
 
 
-  def euclidDistance(vector1: List[Float], vector2: List[Float]): Float = {
-    Float.MinValue //TODO Implementation of calculation
+  def euclidDistance(vector1: Vector[Float], vector2: Vector[Float]): Float = {
+
+    //test me plz
+    var distance: Float = 0
+    for(index <- 0 until vector1.length){
+      distance += square(vector1(index) - vector2(index))
+    }
+
+    Math.sqrt(distance).toFloat
+
+    def square(x: Float) = x * x
   }
 
 
-  def createCluster(vectors: List[List[Float]], centeroids: List[List[Float]]):
-                                  mutable.HashMap[List[Float], List[List[Float]]] = {
+  def createCluster(vectors: List[Vector[Float]], centeroids: List[Vector[Float]]):
+                                  mutable.HashMap[Vector[Float], List[Vector[Float]]] = {
 
-    val cluster = mutable.HashMap[List[Float], List[List[Float]]]()
+    val cluster = mutable.HashMap[Vector[Float], List[Vector[Float]]]()
 
     for (vector <- vectors) {
       var min = Float.MaxValue
@@ -87,7 +102,7 @@ object KMCluster {
 
       println(input.size + " Einträge gelesen!")
 
-      val result = kmc.meanVector(List( List(1.0.toFloat, 2.0.toFloat), List(3.0.toFloat, 5.0.toFloat))) //TODO delete
+      val result = kmc.meanVector(List( Vector(1.0.toFloat, 2.0.toFloat), Vector(3.0.toFloat, 5.0.toFloat))) //TODO delete
       println(result) //TODO delete
 
 
