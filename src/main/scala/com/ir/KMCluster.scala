@@ -107,8 +107,7 @@ object KMCluster {
       val vec1 = Vector(1.0.toFloat, 2.0.toFloat, 0.toFloat, 0.toFloat, 0.toFloat, 0.toFloat)
       val vec2 = Vector(3.0.toFloat, 5.0.toFloat, 10.toFloat, 20.toFloat, 30.toFloat, 40.toFloat)
 
-      val result = kmc.meanVector(List( vec1, vec2)) //TODO delete
-      println(result) //TODO delete
+      println(kmc.meanVector(List( vec1, vec2))) //TODO delete
 
       println(kmc.euclidDistance(vec1, vec2))
 
