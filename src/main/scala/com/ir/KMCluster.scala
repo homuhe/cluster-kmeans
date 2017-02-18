@@ -4,8 +4,8 @@ import scala.collection.mutable
 import scala.io.Source
 
 class Cluster(c: Vector[Float]) {
-  val words = mutable.Set
-  val centroid = c
+  val words = mutable.Set[String]()
+  var centroid = c
 }
 
 /**
@@ -48,20 +48,14 @@ class KMCluster(num_of_clusters: String) {
     }
 
     mVector.map(sum => sum / vectors.length)
-
   }
 
 
   def euclidDistance(vector1: Vector[Float], vector2: Vector[Float]): Float = {
-
-    //test me plz
     var distance: Float = 0
     for (index <- vector1.indices) {
       distance += square(vector1(index) - vector2(index))
     }
-
-
-
     Math.sqrt(distance).toFloat
   }
 
@@ -87,17 +81,23 @@ class KMCluster(num_of_clusters: String) {
   }
 
   def populateClusters(): Unit = {
-
     for (word <- embeddings) {
       var minCentroid = (0, Float.MaxValue)
-
       for (cluster <- clusters) {
         val dist = euclidDistance(word._2, cluster.centroid)
 
         if (dist < minCentroid._2) {
           minCentroid = (clusters.indexOf(cluster), dist)
-          cluster.words = cluster.words + word._1
+          cluster.words += word._1
         }
+      }
+    }
+    updateCentroids
+    def updateCentroids = {
+      for(cluster <- clusters){
+        var wordVecList = List[Vector[Float]]()
+        cluster.words.map(word => wordVecList = embeddings(word) :: wordVecList)
+        cluster.centroid = meanVector(wordVecList)
       }
     }
   }
@@ -132,7 +132,15 @@ object KMCluster {
 
       println("\nDONE!")
 
-      println(kmc.pickRandomCentroids)
+      kmc.createClusters(kmc.pickRandomCentroids)
+
+      println("old centroids:")
+      kmc.clusters.foreach(cluster => println(cluster.centroid))
+
+      kmc.populateClusters()
+//      kmc.clusters.foreach(cluster => println(cluster.words))
+      println("compare with new centroids:")
+      kmc.clusters.foreach(cluster => println(cluster.centroid))
     }
     else help()
   }
