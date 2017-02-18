@@ -8,23 +8,12 @@ class Cluster(c: Vector[Float]) {
   val centroid = c
 }
 
-class Clusters(centroids: List[Vector[Float]]) {
-  var clusters = List[Cluster]()
-
-  def fill() = {
-    for (centroid <- centroids) {
-      val x = new Cluster(centroid)
-      clusters = x :: clusters
-    }
-  }
-
-}
-
 /**
   *
   */
 class KMCluster(num_of_clusters: String) {
   val embeddings = mutable.HashMap[String, Vector[Float]]()
+  var clusters = List[Cluster]()
   val k = num_of_clusters.toInt
 
   def read(file: String): mutable.HashMap[String, Vector[Float]] = {
@@ -112,6 +101,13 @@ class KMCluster(num_of_clusters: String) {
     }
     centroids
   }
+
+  def fill(centroids: List[Vector[Float]]) = {
+    for (centroid <- centroids) {
+      clusters = new Cluster(centroid) :: clusters
+    }
+  }
+
 
 
 }
