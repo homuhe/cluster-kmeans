@@ -31,6 +31,19 @@ class KMCluster(num_of_clusters: String) {
     embeddings
   }
 
+  def pickRandomCentroids(): List[Vector[Float]] = {
+    var centroids: List[Vector[Float]] = Nil
+
+    val wordVecKeys = embeddings.keySet.toList
+    val randomizer = scala.util.Random
+
+    for(num <- 0 until k){
+      val randomNumber = randomizer.nextInt(wordVecKeys.size)
+      centroids = embeddings(wordVecKeys(randomNumber)) :: centroids
+    }
+    centroids
+  }
+
   /**
     * Returns mean vector of given vector list
     * @param vectors list of vectors
@@ -59,19 +72,6 @@ class KMCluster(num_of_clusters: String) {
     Math.sqrt(distance).toFloat
   }
 
-  def pickRandomCentroids(): List[Vector[Float]] = {
-    var centroids: List[Vector[Float]] = Nil
-
-    val wordVecKeys = embeddings.keySet.toList
-    val randomizer = scala.util.Random
-
-    for(num <- 0 until k){
-      val randomNumber = randomizer.nextInt(wordVecKeys.size)
-      centroids = embeddings(wordVecKeys(randomNumber)) :: centroids
-    }
-    centroids
-  }
-
   def createClusters(centroids: List[Vector[Float]]) = {
     for (centroid <- centroids) {
       clusters = new Cluster(centroid) :: clusters
@@ -81,6 +81,7 @@ class KMCluster(num_of_clusters: String) {
   def populateClusters(): Unit = {
     for (word <- embeddings) {
       var minCentroid = (0, Float.MaxValue)
+
       for (cluster <- clusters) {
         val dist = euclidDistance(word._2, cluster.centroid)
 
