@@ -3,6 +3,18 @@ package com.ir
 import scala.collection.mutable
 import scala.io.Source
 
+class Cluster(c: Vector[Float]) {
+  val words = mutable.Set
+  val centroid = c
+}
+
+class Clusters(centroids: List[Vector[Float]]) {
+  val cluster = List[List[Vector[Float]]]
+  for (centroid <- centroids) {
+    //TODO
+  }
+}
+
 /**
   *
   */
@@ -50,7 +62,7 @@ class KMCluster(num_of_clusters: String) {
 
     //test me plz
     var distance: Float = 0
-    for(index <- vector1.indices){
+    for (index <- vector1.indices) {
       distance += square(vector1(index) - vector2(index))
     }
 
