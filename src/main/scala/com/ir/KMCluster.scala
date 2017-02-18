@@ -40,7 +40,7 @@ class KMCluster(num_of_clusters: String) {
     embeddings
   }
 
-  /*
+  /*Random Centroid Pick
    */
   def pickRandomCentroids(): List[Vector[Float]] = {
     Random.shuffle(embeddings.values.toList).take(k)
