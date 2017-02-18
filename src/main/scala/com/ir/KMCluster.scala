@@ -8,18 +8,12 @@ class Cluster(c: Vector[Float]) {
   val centroid = c
 }
 
-class Clusters(centroids: List[Vector[Float]]) {
-  var cluster = List[Cluster]
-  for (centroid <- centroids) {
-    new Cluster(centroid) :: cluster
-  }
-}
-
 /**
   *
   */
 class KMCluster(num_of_clusters: String) {
   val embeddings = mutable.HashMap[String, Vector[Float]]()
+  var clusters = List[Cluster]()
   val k = num_of_clusters.toInt
 
   def read(file: String): mutable.HashMap[String, Vector[Float]] = {
@@ -73,28 +67,6 @@ class KMCluster(num_of_clusters: String) {
 
   def square(x: Float) = x * x
 
-  def createCluster(vectors: List[Vector[Float]], centeroids: List[Vector[Float]]):
-                                  mutable.HashMap[Vector[Float], List[Vector[Float]]] = {
-
-    val cluster = mutable.HashMap[Vector[Float], List[Vector[Float]]]()
-
-    for (vector <- vectors) {
-      var min = Float.MaxValue
-
-
-      for (centeroid <- centeroids) {
-        val distance = euclidDistance(vector, centeroid)
-        if (distance < min) {
-          min = distance
-          //TODO
-
-        }
-      }
-    }
-    cluster
-  }
-
-
   def pickRandomCentroids : List[Vector[Float]] ={
     var centroids: List[Vector[Float]] = Nil
 
@@ -107,6 +79,13 @@ class KMCluster(num_of_clusters: String) {
     }
     centroids
   }
+
+  def createClusters(centroids: List[Vector[Float]]) = {
+    for (centroid <- centroids) {
+      clusters = new Cluster(centroid) :: clusters
+    }
+  }
+
 
 
 }
