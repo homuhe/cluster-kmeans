@@ -102,7 +102,7 @@ class KMCluster(num_of_clusters: String) {
     centroids
   }
 
-  def fill(centroids: List[Vector[Float]]) = {
+  def createClusters(centroids: List[Vector[Float]]) = {
     for (centroid <- centroids) {
       clusters = new Cluster(centroid) :: clusters
     }
