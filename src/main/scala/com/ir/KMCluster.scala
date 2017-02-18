@@ -25,6 +25,8 @@ class KMCluster(num_of_clusters: String) {
     embeddings
   }
 
+  def initDimensionality = embeddings.head._2.length
+
   /**
     * Returns mean vector of given vector list
     * @param vectors list of vectors
