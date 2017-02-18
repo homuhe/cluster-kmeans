@@ -3,6 +3,11 @@ package com.ir
 import scala.collection.mutable
 import scala.io.Source
 
+class Cluster(c: Vector[Float]) {
+  val words = mutable.Set
+  val centeroid = c
+}
+
 /**
   *
   */
@@ -55,7 +60,7 @@ class KMCluster(num_of_clusters: String) {
 
     //test me plz
     var distance: Float = 0
-    for(index <- vector1.indices){
+    for (index <- vector1.indices) {
       distance += square(vector1(index) - vector2(index))
     }
 
@@ -65,29 +70,6 @@ class KMCluster(num_of_clusters: String) {
 
     Math.sqrt(distance).toFloat
   }
-
-
-  def createCluster(vectors: List[Vector[Float]], centeroids: List[Vector[Float]]):
-                                  mutable.HashMap[Vector[Float], List[Vector[Float]]] = {
-
-    val cluster = mutable.HashMap[Vector[Float], List[Vector[Float]]]()
-
-    for (vector <- vectors) {
-      var min = Float.MaxValue
-
-
-      for (centeroid <- centeroids) {
-        val distance = euclidDistance(vector, centeroid)
-        if (distance < min) {
-          min = distance
-          //TODO
-
-        }
-      }
-    }
-    cluster
-  }
-
 }
 
 /**
