@@ -4,7 +4,8 @@ import scala.collection.mutable
 import scala.io.Source
 
 class Cluster(c: Vector[Float]) {
-  val words = mutable.Set[String]()
+//  val words = mutable.Set[String]()
+  var words: List[String] = Nil
   var centroid = c
 }
 
@@ -81,6 +82,8 @@ class KMCluster(num_of_clusters: String) {
   }
 
   def populateClusters(): Unit = {
+    resetClusterWordSets
+
     for (word <- embeddings) {
       var minCentroid = (0, Float.MaxValue)
       for (cluster <- clusters) {
@@ -88,20 +91,26 @@ class KMCluster(num_of_clusters: String) {
 
         if (dist < minCentroid._2) {
           minCentroid = (clusters.indexOf(cluster), dist)
-          cluster.words += word._1
+//          cluster.words += word._1
         }
       }
+      clusters(minCentroid._1).words = word._1 :: clusters(minCentroid._1).words
     }
-    updateCentroids
-    def updateCentroids = {
-      for(cluster <- clusters){
-        var wordVecList = List[Vector[Float]]()
-        cluster.words.map(word => wordVecList = embeddings(word) :: wordVecList)
-        cluster.centroid = meanVector(wordVecList)
-      }
+    updateClusterCentroids
+  }
+
+  def updateClusterCentroids = {
+    for(cluster <- clusters){
+      var wordVecList = List[Vector[Float]]()
+      cluster.words.map(word => wordVecList = embeddings(word) :: wordVecList)
+      cluster.centroid = meanVector(wordVecList)
     }
   }
 
+  def resetClusterWordSets = {
+//    clusters.foreach(cluster => cluster.words.clear())
+    clusters.foreach(cluster => cluster.words = Nil)
+  }
 
 
 }
@@ -134,13 +143,27 @@ object KMCluster {
 
       kmc.createClusters(kmc.pickRandomCentroids)
 
-      println("old centroids:")
-      kmc.clusters.foreach(cluster => println(cluster.centroid))
+      def repeatClusterAssignment = {
+        kmc.populateClusters()
 
-      kmc.populateClusters()
-//      kmc.clusters.foreach(cluster => println(cluster.words))
-      println("compare with new centroids:")
-      kmc.clusters.foreach(cluster => println(cluster.centroid))
+      }
+
+      repeatClusterAssignment
+      kmc.clusters.foreach(cluster => println(kmc.clusters.indexOf(cluster) + " : " + cluster.words + "\nnumber of words: " + cluster.words.size))
+      var len = 0
+      kmc.clusters.map(cluster => len += cluster.words.size)
+      println("total number of words : " + len)
+      // repeat that shit couple of times
+      repeatClusterAssignment
+      repeatClusterAssignment
+      println("-----------------------")
+      kmc.clusters.foreach(cluster => println(kmc.clusters.indexOf(cluster) + " : " + cluster.words+ "\nnumber of words: " + cluster.words.size))
+      len = 0
+      kmc.clusters.map(cluster => len += cluster.words.size)
+      println("total number of words : " + len)
+
+      println("should be: " + kmc.embeddings.size)
+
     }
     else help()
   }
