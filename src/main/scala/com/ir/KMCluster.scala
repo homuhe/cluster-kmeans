@@ -41,11 +41,6 @@ class KMCluster(num_of_clusters: String) {
     val dimensionality = vectors.head.length
     var mVector = Vector.fill(dimensionality)(0.0.toFloat) //TODO enhance fill
 
-
-    println(mVector.indices)
-    println(mVector.size)
-    println(mVector.length)
-
     for (vector <- vectors) {
       for (i <- 0 until dimensionality)
         mVector = mVector.updated(i, mVector(i) + vector(i))
@@ -66,10 +61,47 @@ class KMCluster(num_of_clusters: String) {
 
 
 
-    def square(x: Float) = x * x
-
     Math.sqrt(distance).toFloat
   }
+
+  def square(x: Float) = x * x
+
+  def createCluster(vectors: List[Vector[Float]], centeroids: List[Vector[Float]]):
+                                  mutable.HashMap[Vector[Float], List[Vector[Float]]] = {
+
+    val cluster = mutable.HashMap[Vector[Float], List[Vector[Float]]]()
+
+    for (vector <- vectors) {
+      var min = Float.MaxValue
+
+
+      for (centeroid <- centeroids) {
+        val distance = euclidDistance(vector, centeroid)
+        if (distance < min) {
+          min = distance
+          //TODO
+
+        }
+      }
+    }
+    cluster
+  }
+
+
+  def pickRandomCentroids : List[Vector[Float]] ={
+    var centroids: List[Vector[Float]] = Nil
+
+    val wordVecKeys = embeddings.keySet.toList
+    val randomizer = scala.util.Random
+
+    for(num <- 0 until k){
+      val randomNumber = randomizer.nextInt(wordVecKeys.size)
+      centroids = embeddings(wordVecKeys(randomNumber)) :: centroids
+    }
+    centroids
+  }
+
+
 }
 
 /**
@@ -91,11 +123,14 @@ object KMCluster {
       val vec1 = Vector(1.0.toFloat, 2.0.toFloat, 0.toFloat, 0.toFloat, 0.toFloat, 0.toFloat)
       val vec2 = Vector(3.0.toFloat, 5.0.toFloat, 10.toFloat, 20.toFloat, 30.toFloat, 40.toFloat)
 
-      println(kmc.meanVector(List( vec1, vec2))) //TODO delete
+      val result = kmc.meanVector(List(vec1, vec2)) //TODO delete
+      println(result) //TODO delete
 
       println(kmc.euclidDistance(vec1, vec2))
 
       println("\nDONE!")
+
+      println(kmc.pickRandomCentroids)
     }
     else help()
   }
