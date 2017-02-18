@@ -125,7 +125,7 @@ object KMCluster {
 
       println("\nDONE!")
 
-      kmc.pickRandomCentroids
+      println(kmc.pickRandomCentroids)
     }
     else help()
   }
