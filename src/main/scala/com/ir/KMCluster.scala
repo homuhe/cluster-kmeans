@@ -86,6 +86,22 @@ class KMCluster(num_of_clusters: String) {
     }
   }
 
+  def populateClusters(): Unit = {
+
+    for (word <- embeddings) {
+      var minCentroid = (0, Float.MaxValue)
+
+      for (cluster <- clusters) {
+        val dist = euclidDistance(word._2, cluster.centroid)
+
+        if (dist < minCentroid._2) {
+          minCentroid = (clusters.indexOf(cluster), dist)
+          cluster.words = cluster.words + word._1
+        }
+      }
+    }
+  }
+
 
 
 }
