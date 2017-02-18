@@ -2,6 +2,7 @@ package com.ir
 
 import scala.collection.mutable
 import scala.io.Source
+import scala.util.Random
 
 /**
   *
@@ -42,16 +43,7 @@ class KMCluster(num_of_clusters: String) {
   /*
    */
   def pickRandomCentroids(): List[Vector[Float]] = {
-    var centroids: List[Vector[Float]] = Nil
-
-    val wordVecKeys = embeddings.keySet.toList
-    val randomizer = scala.util.Random
-
-    for(num <- 0 until k){
-      val randomNumber = randomizer.nextInt(wordVecKeys.size)
-      centroids = embeddings(wordVecKeys(randomNumber)) :: centroids
-    }
-    centroids
+    Random.shuffle(embeddings.values.toList).take(k)
   }
 
   /**
