@@ -51,6 +51,7 @@ class KMCluster(num_of_clusters: String) {
 
   def euclidDistance(vector1: Vector[Float], vector2: Vector[Float]): Float = {
 
+    //test me plz
     var distance: Float = 0
     for(index <- 0 until vector1.length){
       distance += square(vector1(index) - vector2(index))
