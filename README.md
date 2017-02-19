@@ -42,6 +42,9 @@ $ ./cluster-kmeans input-sample.txt 100 0.1
 Program prints each word and its cluster on a line, separating the word and the cluster number by a space.
 
 
+.
+
+.
 Authors:
 
 Alexander Hartmann, Holger Muth-Hellebrandt
