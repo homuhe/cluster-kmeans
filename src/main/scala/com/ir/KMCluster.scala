@@ -13,9 +13,6 @@ class Cluster(c: Vector[Float]) {
   var centroid = c
 }
 
-/**
-  *
-  */
 class KMCluster(num_of_clusters: String) {
   val embeddings = mutable.HashMap[String, Vector[Float]]()
   var clusters = List[Cluster]()
@@ -23,8 +20,6 @@ class KMCluster(num_of_clusters: String) {
 
   var thresholdLimit = 1.0
 
-  /*
-   */
   def read(file: String): mutable.HashMap[String, Vector[Float]] = {
     val lines = Source.fromFile(file)
       .getLines()
@@ -41,8 +36,6 @@ class KMCluster(num_of_clusters: String) {
     embeddings
   }
 
-  /*Random Centroid Pick
-   */
   def pickRandomCentroids(): List[Vector[Float]] = {
     Random.shuffle(embeddings.values.toList).take(k)
   }
@@ -64,8 +57,7 @@ class KMCluster(num_of_clusters: String) {
     mVector.map(sum => sum / vectors.length)
   }
 
-  /*
-   */
+
   def euclidDistance(vector1: Vector[Float], vector2: Vector[Float]): Float = {
     var distance: Float = 0
 
@@ -81,8 +73,6 @@ class KMCluster(num_of_clusters: String) {
 
   def square(x: Float) = x * x
 
-  /*
-   */
   def createClusters(centroids: List[Vector[Float]]) = {
     for (centroid <- centroids) {
       clusters = new Cluster(centroid) :: clusters
@@ -107,14 +97,6 @@ class KMCluster(num_of_clusters: String) {
       }
     } while(updateClusterCentroids() != k)
 
-
-
-    println("-----------------------")
-    clusters.foreach(cluster => println(clusters.indexOf(cluster) +
-      " : " + cluster.words+ "\nnumber of words: " + cluster.words.size))
-    var len = 0
-    clusters.foreach(cluster => len += cluster.words.size)
-    println("total number of words : " + len)
   }
 
   def updateClusterCentroids() : Int = {
@@ -130,7 +112,6 @@ class KMCluster(num_of_clusters: String) {
         reachedThreshold += 1
       }
     }
-    println(reachedThreshold)
     reachedThreshold
   }
 
@@ -153,23 +134,23 @@ object KMCluster {
 
   def main(args : Array[String]) {
 
-    println( "FML" )
-
     if (args.length == 2 || args.length == 3) {
 
       val kmc = new KMCluster(args(1))
-      val input = kmc.read(args(0))
+
+      kmc.read(args(0))
 
       if (args.length == 3) kmc.thresholdLimit = args(2).toFloat
-      println("Threshold limit is set to "+kmc.thresholdLimit)
-
-      println(input.size + " Einträge gelesen!")
-      println("\nDONE!")
 
       kmc.createClusters(kmc.pickRandomCentroids())
 
       kmc.populateClusters()
       kmc.clusters.foreach(cluster => println("\n" + cluster.words))
+      for (cluster <-  kmc.clusters)
+        for (word <- cluster.words) {
+          println(kmc.clusters.indexOf(cluster) + " " + word)
+        }
+
 
     }
     else help()
