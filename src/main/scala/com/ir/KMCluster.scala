@@ -6,7 +6,7 @@ import scala.util.Random
 
 /**
   *
-  * @param c
+  * @param c the centroid vector
   */
 class Cluster(c: Vector[Float]) {
   var words: List[String] = Nil
@@ -18,7 +18,7 @@ class KMCluster(num_of_clusters: String) {
   var clusters = List[Cluster]()
   val k = num_of_clusters.toInt
 
-  var thresholdLimit = 1.0
+  var thresholdLimit = 0.5
 
   def read(file: String): mutable.HashMap[String, Vector[Float]] = {
     val lines = Source.fromFile(file)
@@ -36,21 +36,21 @@ class KMCluster(num_of_clusters: String) {
     embeddings
   }
 
-  def pickRandomCentroids(): List[Vector[Float]] = {
-    Random.shuffle(embeddings.values.toList).take(k)
-  }
+  // returns k random starting data points for cluster centroids
+  def pickRandomCentroids(): List[Vector[Float]] = Random.shuffle(embeddings.values.toList).take(k)
+
 
   /**
     * Returns mean vector of given vector list
     * @param vectors list of vectors
     * @return mean vector
     */
-  def meanVector(vectors: List[Vector[Float]]): Vector[Float] = {
-    val dimensionality = vectors.head.length
-    var mVector = Vector.fill(dimensionality)(0.0.toFloat) //TODO enhance fill
+  def moveCentroid(vectors: List[Vector[Float]]): Vector[Float] = {
+    val dimensions = vectors.head.length
+    var mVector = Vector.fill(dimensions)(0.0.toFloat) //TODO enhance fill
 
     for (vector <- vectors) {
-      for (i <- 0 until dimensionality)
+      for (i <- 0 until dimensions)
         mVector = mVector.updated(i, mVector(i) + vector(i))
     }
 
@@ -58,6 +58,7 @@ class KMCluster(num_of_clusters: String) {
   }
 
 
+  // returns the euclidean distance between two vectors
   def euclidDistance(vector1: Vector[Float], vector2: Vector[Float]): Float = {
     var distance: Float = 0
 
@@ -66,7 +67,8 @@ class KMCluster(num_of_clusters: String) {
     }
     Math.sqrt(distance).toFloat
   }
-  
+
+  // calculating the L2-norm for unit length normalization
   def L2Norm(vector: Vector[Float]): Float = {
     Math.sqrt(vector.map(x => square(x)).sum).toFloat
   }
@@ -80,6 +82,7 @@ class KMCluster(num_of_clusters: String) {
   }
 
   def populateClusters(): Unit = {
+    createClusters(pickRandomCentroids())
 
     do {
       resetClusterWordSets()
@@ -106,7 +109,7 @@ class KMCluster(num_of_clusters: String) {
       val centroidDummy = cluster.centroid
       var wordVecList = List[Vector[Float]]()
       cluster.words.foreach(word => wordVecList = embeddings(word) :: wordVecList)
-      cluster.centroid = meanVector(wordVecList)
+      cluster.centroid = moveCentroid(wordVecList)
 
       if(euclidDistance(centroidDummy, cluster.centroid) < thresholdLimit){
         reachedThreshold += 1
@@ -115,17 +118,10 @@ class KMCluster(num_of_clusters: String) {
     reachedThreshold
   }
 
-  def resetClusterWordSets() = {
-    clusters.foreach(cluster => cluster.words = Nil)
-  }
+  def resetClusterWordSets() = clusters.foreach(cluster => cluster.words = Nil)
 
-    for(cluster <- clusters){
-      var wordVecList = List[Vector[Float]]()
 
-      cluster.words.foreach(word => wordVecList = embeddings(word) :: wordVecList)
-      cluster.centroid = meanVector(wordVecList)
-    }
-  }
+}
 
 /**
   *
@@ -142,10 +138,8 @@ object KMCluster {
 
       if (args.length == 3) kmc.thresholdLimit = args(2).toFloat
 
-      kmc.createClusters(kmc.pickRandomCentroids())
-
       kmc.populateClusters()
-      kmc.clusters.foreach(cluster => println("\n" + cluster.words))
+
       for (cluster <-  kmc.clusters)
         for (word <- cluster.words) {
           println(kmc.clusters.indexOf(cluster) + " " + word)
@@ -159,8 +153,8 @@ object KMCluster {
   def help(): Unit = {
     println("Usage: ./cluster-kmeans arg1 arg2 [opt3]")
     println("\t\targ1: ARG1 - text file with embeddings")
-    println("\t\targ2: ARG2 - desired cluster size")
-    println("\t\targ2: OPT2 - desired cluster movement tolerance")
+    println("\t\targ2: ARG2 - desired cluster size k")
+    println("\t\targ2: OPT2 - desired centroid movement tolerance (threshold)")
     sys.exit()
   }
 }
