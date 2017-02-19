@@ -35,12 +35,13 @@ class KMCluster(num_of_clusters: String) {
       val embedding = line.tail
         .map(x => x.toFloat)
         .toVector
-      embeddings(word) = embedding
+      val l2Norm = L2Norm(embedding)
+      embeddings(word) = embedding.map(vec => vec/l2Norm)
     }
     embeddings
   }
 
-  /*
+  /*Random Centroid Pick
    */
   def pickRandomCentroids(): List[Vector[Float]] = {
     Random.shuffle(embeddings.values.toList).take(k)
@@ -107,6 +108,13 @@ class KMCluster(num_of_clusters: String) {
     }while(updateClusterCentroids() != k)
 
 
+
+    println("-----------------------")
+    clusters.foreach(cluster => println(clusters.indexOf(cluster) +
+      " : " + cluster.words+ "\nnumber of words: " + cluster.words.size))
+    var len = 0
+    clusters.foreach(cluster => len += cluster.words.size)
+    println("total number of words : " + len)
   }
 
   def updateClusterCentroids() : Int = {
