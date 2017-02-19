@@ -27,7 +27,7 @@ $ ./cluster-kmeans arg1 arg2 [opt1]
 ```
 Example run:
 ```
-$ ./cluster-kmeans input-sample.txt 100 0.1
+$ ./cluster-kmeans sample-input.txt 100 0.1
 > 0 Seit
 0 Ab
 0 Von
@@ -40,3 +40,8 @@ $ ./cluster-kmeans input-sample.txt 100 0.1
 
 ## Output
 Program prints each word and its cluster on a line, separating the word and the cluster number by a space.
+
+
+_
+
+Authors: *Alexander Hartmann, Holger Muth-Hellebrandt*
