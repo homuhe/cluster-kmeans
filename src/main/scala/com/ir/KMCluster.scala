@@ -68,13 +68,17 @@ class KMCluster(num_of_clusters: String) {
   def euclidDistance(vector1: Vector[Float], vector2: Vector[Float]): Float = {
     var distance: Float = 0
 
-    def square(x: Float) = x * x
-
     for (index <- vector1.indices) {
       distance += square(vector1(index) - vector2(index))
     }
     Math.sqrt(distance).toFloat
   }
+  
+  def L2Norm(vector: Vector[Float]): Float = {
+    Math.sqrt(vector.map(x => square(x)).sum).toFloat
+  }
+
+  def square(x: Float) = x * x
 
   /*
    */
