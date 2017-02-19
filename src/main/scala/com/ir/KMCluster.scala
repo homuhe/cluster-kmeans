@@ -176,9 +176,10 @@ object KMCluster {
   }
 
   def help(): Unit = {
-    println("Usage: ./cluster-kmeans arg1 arg2")
-    println("\t\targ1: INPUT - text file with embeddings")
+    println("Usage: ./cluster-kmeans arg1 arg2 [opt3]")
+    println("\t\targ1: ARG1 - text file with embeddings")
     println("\t\targ2: ARG2 - desired cluster size")
+    println("\t\targ2: OPT2 - desired cluster movement tolerance")
     sys.exit()
   }
 }
