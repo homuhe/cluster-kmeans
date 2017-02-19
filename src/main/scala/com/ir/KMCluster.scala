@@ -21,7 +21,7 @@ class KMCluster(num_of_clusters: String) {
   var clusters = List[Cluster]()
   val k = num_of_clusters.toInt
 
-  val thresholdLimit = 2
+  var thresholdLimit = 1.0
 
   /*
    */
@@ -155,10 +155,13 @@ object KMCluster {
 
     println( "FML" )
 
-    if (args.length == 2) {
+    if (args.length == 2 || args.length == 3) {
 
       val kmc = new KMCluster(args(1))
       val input = kmc.read(args(0))
+
+      if (args.length == 3) kmc.thresholdLimit = args(2).toFloat
+      println("Threshold limit is set to "+kmc.thresholdLimit)
 
       println(input.size + " Einträge gelesen!")
       println("\nDONE!")
