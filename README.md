@@ -27,7 +27,7 @@ $ ./cluster-kmeans arg1 arg2 [opt1]
 ```
 Example run:
 ```
-$ ./cluster-kmeans sample-input.txt 100 0.1
+$ ./cluster-kmeans sample-input.txt 100 0.01
 > 0 Seit
 0 Ab
 0 Von
