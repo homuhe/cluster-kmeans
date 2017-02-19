@@ -9,7 +9,7 @@ Assuming that word embeddings as vectors in a n-dimensional space have distances
 ## Input
 Sample input file is a word embedding trained on German Wikipedia by using the word2vec CBOW model with vector size 300 and a minimum word frequency of 50.
 
-Requiered format for using cluster-kmeans:
+Required format for using cluster-kmeans:
 ```
 word1 value1 value2 value3 ...
 word2 value1 value2 value3 ...
