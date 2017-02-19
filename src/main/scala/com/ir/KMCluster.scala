@@ -93,19 +93,19 @@ class KMCluster(num_of_clusters: String) {
 
     do {
       resetClusterWordSets()
-      for (word <- embeddings) {
+      for ((word, vector) <- embeddings) {
         var minCentroid = (0, Float.MaxValue)
 
         for (cluster <- clusters) {
-          val dist = euclidDistance(word._2, cluster.centroid)
+          val dist = euclidDistance(vector, cluster.centroid)
 
           if (dist < minCentroid._2) {
             minCentroid = (clusters.indexOf(cluster), dist)
           }
         }
-        clusters(minCentroid._1).words = word._1 :: clusters(minCentroid._1).words
+        clusters(minCentroid._1).words = word :: clusters(minCentroid._1).words
       }
-    }while(updateClusterCentroids() != k)
+    } while(updateClusterCentroids() != k)
 
 
 
