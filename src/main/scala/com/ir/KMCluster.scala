@@ -5,14 +5,18 @@ import scala.io.Source
 import scala.util.Random
 
 /**
-  *
-  * @param c the centroid vector
+  * Cluster class
+  * @param c centroid vector
   */
 class Cluster(c: Vector[Float]) {
   var words: List[String] = Nil
   var centroid = c
 }
 
+/**
+  * k-means cluster class
+  * @param num_of_clusters number k of desired clusters
+  */
 class KMCluster(num_of_clusters: String) {
   val embeddings = mutable.HashMap[String, Vector[Float]]()
   var clusters = List[Cluster]()
@@ -124,7 +128,7 @@ class KMCluster(num_of_clusters: String) {
 }
 
 /**
-  *
+  * Companion object of KMCluster class
   */
 object KMCluster {
 
@@ -150,11 +154,15 @@ object KMCluster {
     else help()
   }
 
+  /**
+    * Helper method
+    */
   def help(): Unit = {
-    println("Usage: ./cluster-kmeans arg1 arg2 [opt3]")
-    println("\t\targ1: ARG1 - text file with embeddings")
-    println("\t\targ2: ARG2 - desired cluster size k")
-    println("\t\targ2: OPT2 - desired centroid movement tolerance (threshold)")
+    println("Usage: ./cluster-kmeans arg1 arg2 [opt1]")
+    println("\t\targ1: INPUT FILE\t - text file with embeddings")
+    println("\t\targ2: INTEGER\t    - number of desired clusters")
+    println("\t\t\t\t                 min = 1; max = number of words in input file")
+    println("\t\topt1: FLOAT\t      - cluster movement tolerance, threshold to stop algorithm")
     sys.exit()
   }
 }
