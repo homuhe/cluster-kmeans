@@ -44,4 +44,4 @@ Program prints each word and its cluster on a line, separating the word and the 
 
 _
 
-*Authors: Alexander Hartmann, Holger Muth-Hellebrandt*
+Authors: *Alexander Hartmann, Holger Muth-Hellebrandt*
