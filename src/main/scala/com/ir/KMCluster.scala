@@ -1,3 +1,11 @@
+
+/** Author:       Alexander Hartmann,
+  *               Holger Muth-Hellebrandt
+  *
+  * Task:         Assignment 5A
+  * Description:  K-Means Clustering Algorithm
+  */
+
 package com.ir
 
 import scala.collection.mutable
@@ -22,8 +30,18 @@ class KMCluster(num_of_clusters: String) {
   var clusters = List[Cluster]()
   val k = num_of_clusters.toInt
 
+  // threshold 1 will guarantee only 1 iteration
+  // (quick run, results depend on random starting centroids)
+  // threshold below 0.01 can take more than 10+ iterations
+  // (long, but more accurate run)
   var thresholdLimit = 0.5
 
+
+  /**
+    * Reads the file in and produces a representation in memory
+    * @param file the file containing the word embeddings
+    * @return a map from word to its vector
+    */
   def read(file: String): mutable.HashMap[String, Vector[Float]] = {
     val lines = Source.fromFile(file)
       .getLines()
@@ -62,7 +80,12 @@ class KMCluster(num_of_clusters: String) {
   }
 
 
-  // returns the euclidean distance between two vectors
+  /**
+    * Returns the euclidean distance between two vectors
+    * @param vector1 list of vector 1
+    * @param vector2 list of vector 2
+    * @return euclidean distance
+    */
   def euclidDistance(vector1: Vector[Float], vector2: Vector[Float]): Float = {
     var distance: Float = 0
 
@@ -73,23 +96,32 @@ class KMCluster(num_of_clusters: String) {
   }
 
   // calculating the L2-norm for unit length normalization
-  def L2Norm(vector: Vector[Float]): Float = {
-    Math.sqrt(vector.map(x => square(x)).sum).toFloat
-  }
+  def L2Norm(vector: Vector[Float]): Float = Math.sqrt(vector.map(x => square(x)).sum).toFloat
 
+
+  // helper method to square
   def square(x: Float) = x * x
 
+  /**
+    * Initializing the clusters
+    * @param centroids list of (random) centroids vectors
+    */
   def createClusters(centroids: List[Vector[Float]]) = {
     for (centroid <- centroids) {
       clusters = new Cluster(centroid) :: clusters
     }
   }
 
+  /**
+    * clustering algorithm
+    * firstly initializes the clusters and then several iterations can occur
+    * depending on the threshold that has been set, but at least one
+    */
   def populateClusters(): Unit = {
     createClusters(pickRandomCentroids())
 
     do {
-      resetClusterWordSets()
+      resetClusterWordLists()
       for ((word, vector) <- embeddings) {
         var minCentroid = (0, Float.MaxValue)
 
@@ -100,12 +132,18 @@ class KMCluster(num_of_clusters: String) {
             minCentroid = (clusters.indexOf(cluster), dist)
           }
         }
+        //assign word with smallest to a cluster to that cluster
         clusters(minCentroid._1).words = word :: clusters(minCentroid._1).words
       }
     } while(updateClusterCentroids() != k)
-
   }
 
+  /**
+    * changes the position of the centroids, according to
+    * the new data points of the words that have been assigned to
+    * the cluster
+    * @return number of centroid that did not move very much compared to previous position
+    */
   def updateClusterCentroids() : Int = {
     var reachedThreshold = 0
 
@@ -119,12 +157,12 @@ class KMCluster(num_of_clusters: String) {
         reachedThreshold += 1
       }
     }
+//    println(reachedThreshold + " centroids reached required minimal distance improvement (threshold)")
     reachedThreshold
   }
 
-  def resetClusterWordSets() = clusters.foreach(cluster => cluster.words = Nil)
-
-
+  // emptying the cluster word lists again
+  def resetClusterWordLists() = clusters.foreach(cluster => cluster.words = Nil)
 }
 
 /**
@@ -136,19 +174,21 @@ object KMCluster {
 
     if (args.length == 2 || args.length == 3) {
 
+      // declare k-means clustering with parameter k
       val kmc = new KMCluster(args(1))
 
+      // read in the file, instantiate word embeddings map
       kmc.read(args(0))
 
+      //optionally let the user assign a threshold himself
       if (args.length == 3) kmc.thresholdLimit = args(2).toFloat
 
+      // start actual algorithm
       kmc.populateClusters()
 
+      // print each word with its cluster
       for (cluster <-  kmc.clusters)
-        for (word <- cluster.words) {
-          println(kmc.clusters.indexOf(cluster) + " " + word)
-        }
-
+        for (word <- cluster.words) println(kmc.clusters.indexOf(cluster) + " " + word)
 
     }
     else help()
@@ -163,6 +203,7 @@ object KMCluster {
     println("\t\targ2: INTEGER\t    - number of desired clusters")
     println("\t\t\t\t                 min = 1; max = number of words in input file")
     println("\t\topt1: FLOAT\t      - cluster movement tolerance, threshold to stop algorithm")
+    println("\t\t\t\t                 recommended value: 1 - 0.001 (the higher the threshold the less iterations)")
     sys.exit()
   }
 }
